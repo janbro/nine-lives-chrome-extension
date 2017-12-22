@@ -13,7 +13,7 @@
         
     ],
     "background": {
-        "scripts": ["scripts/dependencies/web3.min.js", "scripts/contracts/KryptoKittiesInterface.js", "scripts/background.js"]
+        "scripts": ["scripts/dependencies/bignumber.min.js", "scripts/dependencies/web3.min.js", "scripts/contracts/KryptoKittiesInterface.js", "scripts/background.js"]
     },
     "content_scripts": [
         {
@@ -21,7 +21,8 @@
             "https://www.cryptokitties.co/marketplace/*",
             "https://www.cryptokitties.co/kitty/*"
             ],
-            "js": ["scripts/dependencies/jquery-3.2.1.min.js", "scripts/content.js"]
+            "js": ["scripts/dependencies/bignumber.min.js", "scripts/dependencies/jquery-3.2.1.min.js", "scripts/content.js"]
         }
-    ]
-  }
+    ],
+    "web_accessible_resources": ["svg/*"]
+}

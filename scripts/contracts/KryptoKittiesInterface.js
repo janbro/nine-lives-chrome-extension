@@ -1,4 +1,4 @@
-let CONTRACT_ADDRESS = '0x3d737a47f859f36a3408b8327e72674c257cd88a';
+let CONTRACT_ADDRESS = '0xe295f8c2fb10e2d0eb52ff1094abc71f95d6aeb3';
 let LOCAL_HTTP_PROVIDER = "http://localhost:8545";
 
 var web3 = new Web3();
@@ -13,6 +13,21 @@ var web3 = new Web3();
 /* } */
 
 web3.eth.defaultAccount = web3.eth.accounts[0]; //Testing purposes
+
+class KittyInfo  {
+	constructor(_isGestating, _isReady, _cooldownIndex, _nextAuctionAt, _siringWithId, _birthTime, _matronId, _sireId, _generation, _genes) {
+		this.genes = _genes;
+		this.birthTime = _birthTime;
+		this.cooldownEndBlock = _nextAuctionAt;
+		this.matronId = _matronId;
+		this.sireId = _sireId;
+		this.siringWithId = _siringWithId;
+		this.cooldownIndex = _cooldownIndex;
+		this.generation = _generation;
+		this.isGestating = _isGestating;
+		this.isReady = _isReady;
+	}
+}
 
 let KryptoKittiesABI = web3.eth.contract([
 	{

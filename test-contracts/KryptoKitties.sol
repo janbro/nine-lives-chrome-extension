@@ -49,7 +49,7 @@ contract TestKittyContract {
         uint256 generation,
         uint256 genes
     ) {
-        Kitty storage kit = kitties[_id];
+        Kitty storage kit = kitties[_id % kitties.length];
 
         // if this variable is 0 then it's not gestating
         isGestating = (kit.siringWithId != 0);
