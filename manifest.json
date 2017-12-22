@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+  
+    "name": "Nine Lives",
+    "description": "This extension allows the user to view and keep track of accessories for their Crypto Kitty.",
+    "version": "0.1",
+  
+    "browser_action": {
+      "default_icon": "icon.png",
+      "default_popup": "popup.html"
+    },
+    "permissions": [
+        
+    ],
+    "background": {
+        "scripts": ["scripts/deps/web3.min.js", "scripts/contracts/KryptoKittiesInterface.js", "scripts/background.js"]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+            "<all_urls>"
+            ],
+            "js": ["scripts/deps/jquery-3.2.1.min.js", "scripts/content.js"]
+        }
+    ]
+  }
