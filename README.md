@@ -13,7 +13,7 @@ Before deploying the test contracts, check the contract address listed in the co
 More information at https://coursetro.com/posts/code/99/Interacting-with-a-Smart-Contract-through-Web3.js-(Tutorial)
 
 # How to install this extension?
-1. Checkout this repository
-2. Open Google Chrome, navigate to `Chrome => Preferences => Extensions` or `chrome://extensions`
+1. Clone this repository
+2. Open Google Chrome, navigate to `Chrome => Preferences => Extensions` or enter `chrome://extensions` in the url
 3. Enable **Developer Mode**
 4. Click on `Load unpacked extension` and select the root of this repository
