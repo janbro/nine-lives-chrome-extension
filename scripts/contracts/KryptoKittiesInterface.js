@@ -1,4 +1,4 @@
-let CONTRACT_ADDRESS = '0xe295f8c2fb10e2d0eb52ff1094abc71f95d6aeb3';
+let CONTRACT_ADDRESS = 'CONTRACT_ADDRESS';
 let LOCAL_HTTP_PROVIDER = "http://localhost:8545";
 
 var web3 = new Web3();

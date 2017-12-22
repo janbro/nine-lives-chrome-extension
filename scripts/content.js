@@ -2,7 +2,6 @@ console.log("Nine Lives");
 
 
 let baseAccessory = document.createElement("IMG");
-baseAccessory.className = "KittyCard-image";
 baseAccessory.style.zIndex = 2;
 
 let headBandage = baseAccessory.cloneNode();
@@ -32,7 +31,29 @@ chrome.runtime.onMessage.addListener(
                 //Send kitty ids to background script
                 chrome.runtime.sendMessage({"message": "GET_KITTY", "kittyId": kittyId}, (response) => {
                     console.log(response);
-                    div.childNodes[0].childNodes[0].childNodes[0].appendChild(kittyAccessories[BigNumber(response.result.birthTime.slice(-1)).modulo(kittyAccessories.length).toNumber()].cloneNode());
+                    let accessory = kittyAccessories[BigNumber(response.result.birthTime.slice(-1)).modulo(kittyAccessories.length).toNumber()].cloneNode();
+                    accessory.className = "KittyCard-image";
+                    accessory.style.position = "absolute";
+                    
+                    div.childNodes[0].childNodes[0].childNodes[0].appendChild(accessory);
+                });
+            });
+
+            //KittyBanner-container
+            document.querySelectorAll(".KittyBanner-container").forEach((div, index, array) => {
+                let kittyId = /\/\d*$/g.exec(div.childNodes[0].href)[0].substr(1);
+
+                //Send kitty ids to background script
+                chrome.runtime.sendMessage({"message": "GET_KITTY", "kittyId": kittyId}, (response) => {
+                    console.log(response);
+                    let accessoryContainer = document.createElement("a");
+                    accessoryContainer.style.position = "absolute";
+
+                    let accessory = kittyAccessories[BigNumber(response.result.birthTime.slice(-1)).modulo(kittyAccessories.length).toNumber()].cloneNode();
+                    accessory.className = "KittyBanner-image";
+                    accessoryContainer.appendChild(accessory);
+
+                    div.appendChild(accessoryContainer);
                 });
             });
         }
