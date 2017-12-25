@@ -10,18 +10,29 @@
       "default_popup": "popup.html"
     },
     "permissions": [
-        
+        "tabs"
     ],
     "background": {
-        "scripts": ["scripts/dependencies/bignumber.min.js", "scripts/dependencies/web3.min.js", "scripts/contracts/KryptoKittiesInterface.js", "scripts/background.js"]
+        "scripts": [
+            "scripts/dependencies/bignumber.min.js",
+            "scripts/dependencies/web3.min.js",
+            "scripts/contracts/InitializeWeb3.js",
+            "scripts/contracts/KryptoKittiesInterface.js",
+            "scripts/contracts/NineLivesInterface.js",
+            "scripts/background.js"
+        ]
     },
     "content_scripts": [
         {
             "matches": [
-            "https://www.cryptokitties.co/marketplace/*",
-            "https://www.cryptokitties.co/kitty/*"
+                "https://www.cryptokitties.co/marketplace/*",
+                "https://www.cryptokitties.co/kitty/*"
             ],
-            "js": ["scripts/dependencies/bignumber.min.js", "scripts/dependencies/jquery-3.2.1.min.js", "scripts/content.js"]
+            "js": [
+                "scripts/dependencies/bignumber.min.js",
+                "scripts/dependencies/jquery-3.2.1.min.js",
+                "scripts/content.js"
+            ]
         }
     ],
     "web_accessible_resources": ["svg/*"]

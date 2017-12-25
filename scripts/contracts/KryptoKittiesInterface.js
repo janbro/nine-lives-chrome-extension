@@ -1,18 +1,4 @@
-let CONTRACT_ADDRESS = 'CONTRACT_ADDRESS';
-let LOCAL_HTTP_PROVIDER = "http://localhost:8545";
-
-var web3 = new Web3();
-
-//Force provider to use local ethereum node
-
-/* if (typeof web3 !== 'undefined') {
-     web3 = new Web3(web3.currentProvider);
- } else {
-    // set the provider you want from Web3.providers */
-    web3 = new Web3(new Web3.providers.HttpProvider(LOCAL_HTTP_PROVIDER));
-/* } */
-
-web3.eth.defaultAccount = web3.eth.accounts[0]; //Testing purposes
+let KRYPTO_KITTIES_CONTRACT_ADDRESS = '0x39df7d0aa6e025c9d64d5919279ab6c62ca8126e';
 
 class KittyInfo  {
 	constructor(_isGestating, _isReady, _cooldownIndex, _nextAuctionAt, _siringWithId, _birthTime, _matronId, _sireId, _generation, _genes) {
@@ -148,4 +134,4 @@ let KryptoKittiesABI = web3.eth.contract([
 	}
 ]);
 
-var KryptoKitties = KryptoKittiesABI.at(CONTRACT_ADDRESS);
+var KryptoKitties = KryptoKittiesABI.at(KRYPTO_KITTIES_CONTRACT_ADDRESS);

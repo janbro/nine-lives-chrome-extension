@@ -2,7 +2,7 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if( request.message === "GET_KITTY" ) {
             //Get kitty info from contract
-            let rawKittyInfo = KryptoKitties.getKitty(request.kittyId, function(error, result) {
+            KryptoKitties.getKitty(request.kittyId, function(error, result) {
                 if(error) {
                     console.log(error);
                 }
@@ -12,12 +12,30 @@ chrome.runtime.onMessage.addListener(
                 }
             });
         }
+        else if( request.message === "GET_KITTY_LIVES" ) {
+            //Get kitty info from contract
+            NineLives.getKittyLives(request.kittyId, function(error, result) {
+                if(error) {
+                    console.log(error);
+                }
+                else {
+                    let lives = result.toNumber();
+                    if(lives === -1) {
+                        return false;
+                    }
+                    console.log(lives);
+                    sendResponse({result: lives});
+                }
+            });
+        }
         return true;
     }
 );
 
 chrome.tabs.onUpdated.addListener(
     function(tabId, changeInfo, tab) {
-        chrome.tabs.sendMessage(tabId, {"message": "POLL_KITTIES"});
+        if(changeInfo.url){
+            chrome.tabs.sendMessage(tabId, {"message": "POLL_KITTIES"});
+        }
     }
 );

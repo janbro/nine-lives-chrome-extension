@@ -4,15 +4,24 @@ console.log("Nine Lives");
 let baseAccessory = document.createElement("IMG");
 baseAccessory.style.zIndex = 2;
 
+let baseHeart = baseAccessory.cloneNode();
+baseHeart.style.width = '10%';
+baseHeart.style.display = 'inline-grid';
+baseHeart.style.position = 'relative';
+
 let headBandage = baseAccessory.cloneNode();
 let legBandage = baseAccessory.cloneNode();
 let eyeBruise = baseAccessory.cloneNode();
 let bandaid = baseAccessory.cloneNode();
+let heart = baseHeart.cloneNode();
+let heartGrey = baseHeart.cloneNode();
 
 headBandage.src = chrome.extension.getURL("./svg/kitty_accessories/head_bandage.svg");
 legBandage.src = chrome.extension.getURL("./svg/kitty_accessories/leg_bandage.svg");
 eyeBruise.src = chrome.extension.getURL("./svg/kitty_accessories/eye_bruise.svg");
 bandaid.src = chrome.extension.getURL("./svg/kitty_accessories/bandaid.svg");
+heart.src = chrome.extension.getURL("./svg/heartPinkLargest.svg");
+heartGrey.src = chrome.extension.getURL("./svg/heartPinkLargest-grey.svg");
 
 let kittyAccessories = [
     headBandage,
@@ -49,6 +58,11 @@ function renderAccessories() {
             accessory.style.position = "absolute";
 
             div.childNodes[0].childNodes[0].childNodes[0].appendChild(accessory);
+
+            chrome.runtime.sendMessage({"message": "GET_KITTY_LIVES", "kittyId": kittyId}, (response) => {
+                console.log(response);
+                div.childNodes[0].childNodes[0].childNodes[0].appendChild(renderGridHearts(response.result));
+            });
         });
     });
 
@@ -66,10 +80,56 @@ function renderAccessories() {
             accessoryContainer.appendChild(accessory);
 
             div.appendChild(accessoryContainer);
+            
+            chrome.runtime.sendMessage({"message": "GET_KITTY_LIVES", "kittyId": kittyId}, (response) => {
+                div.appendChild(renderPageHearts(response.result));
+            });
         });
     });
 
     return true;
+}
+
+function renderGridHearts(livesRemaining) {
+    let heartsContainer = document.createElement("div");
+    heartsContainer.style.width = '100%';
+    heartsContainer.style.height = 'auto';
+    heartsContainer.style.top = '90%';
+    heartsContainer.style.left = '50%';
+    heartsContainer.style.marginLeft = '5px';
+    heartsContainer.className = 'KittyCard-image';
+    
+    for(let i=0; i < 9; i++) {
+        if(i < livesRemaining) {
+            heartsContainer.appendChild(heart.cloneNode());
+        }
+        else {
+            heartsContainer.appendChild(heartGrey.cloneNode());
+        }
+    }
+
+    return heartsContainer;
+}
+
+function renderPageHearts(livesRemaining) {
+    let heartsContainer = document.createElement("div");
+    heartsContainer.style.height = 'auto';
+    heartsContainer.style.top = '85%';
+    heartsContainer.style.left = '1%';
+    heartsContainer.style.marginLeft = '5px';
+    heartsContainer.style.position = 'absolute';
+    heartsContainer.className = 'KittyCard-image';
+    
+    for(let i=0; i < 9; i++) {
+        if(i < livesRemaining) {
+            heartsContainer.appendChild(heart.cloneNode());
+        }
+        else {
+            heartsContainer.appendChild(heartGrey.cloneNode());
+        }
+    }
+
+    return heartsContainer;
 }
 
 // The polling function
