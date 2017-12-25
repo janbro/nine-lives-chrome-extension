@@ -13,7 +13,7 @@ let NineLivesABI = web3.eth.contract([
 		"outputs": [
 			{
 				"name": "lives",
-				"type": "int8"
+				"type": "uint8"
 			}
 		],
 		"payable": false,

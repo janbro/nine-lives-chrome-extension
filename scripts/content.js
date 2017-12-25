@@ -13,6 +13,7 @@ let headBandage = baseAccessory.cloneNode();
 let legBandage = baseAccessory.cloneNode();
 let eyeBruise = baseAccessory.cloneNode();
 let bandaid = baseAccessory.cloneNode();
+let tombstone = baseAccessory.cloneNode();
 let heart = baseHeart.cloneNode();
 let heartGrey = baseHeart.cloneNode();
 
@@ -20,6 +21,7 @@ headBandage.src = chrome.extension.getURL("./svg/kitty_accessories/head_bandage.
 legBandage.src = chrome.extension.getURL("./svg/kitty_accessories/leg_bandage.svg");
 eyeBruise.src = chrome.extension.getURL("./svg/kitty_accessories/eye_bruise.svg");
 bandaid.src = chrome.extension.getURL("./svg/kitty_accessories/bandaid.svg");
+tombstone.src = chrome.extension.getURL("./svg/tombstone.svg");
 heart.src = chrome.extension.getURL("./svg/heartPinkLargest.svg");
 heartGrey.src = chrome.extension.getURL("./svg/heartPinkLargest-grey.svg");
 
@@ -52,17 +54,26 @@ function renderAccessories() {
         let kittyId = /\/\d*$/g.exec(div.childNodes[0].href)[0].substr(1);
 
         //Send kitty ids to background script
-        chrome.runtime.sendMessage({"message": "GET_KITTY", "kittyId": kittyId}, (response) => {
-            let accessory = kittyAccessories[BigNumber(response.result.birthTime.slice(-1)).modulo(kittyAccessories.length).toNumber()].cloneNode();
-            accessory.className = "KittyCard-image";
-            accessory.style.position = "absolute";
+        chrome.runtime.sendMessage({"message": "GET_KITTY_LIVES", "kittyId": kittyId}, (response) => {
+            let parent = div.childNodes[0].childNodes[0].childNodes[0];
 
-            div.childNodes[0].childNodes[0].childNodes[0].appendChild(accessory);
+            if(response.result === 1) {
+                //Kitty is dead
+                parent.removeChild(parent.childNodes[0]);
+                tombstone.className = "KittyCard-image";
+                parent.appendChild(tombstone.cloneNode());
+            }
+            else {
+                parent.appendChild(renderGridHearts(response.result));
 
-            chrome.runtime.sendMessage({"message": "GET_KITTY_LIVES", "kittyId": kittyId}, (response) => {
-                console.log(response);
-                div.childNodes[0].childNodes[0].childNodes[0].appendChild(renderGridHearts(response.result));
-            });
+                chrome.runtime.sendMessage({"message": "GET_KITTY", "kittyId": kittyId}, (response) => {
+                    let accessory = kittyAccessories[BigNumber(response.result.birthTime.slice(-1)).modulo(kittyAccessories.length).toNumber()].cloneNode();
+                    accessory.className = "KittyCard-image";
+                    accessory.style.position = "absolute";
+    
+                    parent.appendChild(accessory);
+                });
+            }
         });
     });
 
@@ -71,19 +82,27 @@ function renderAccessories() {
         let kittyId = /\/\d*$/g.exec(div.childNodes[0].href)[0].substr(1);
 
         //Send kitty ids to background script
-        chrome.runtime.sendMessage({"message": "GET_KITTY", "kittyId": kittyId}, (response) => {
-            let accessoryContainer = document.createElement("a");
-            accessoryContainer.style.position = "absolute";
-
-            let accessory = kittyAccessories[BigNumber(response.result.birthTime.slice(-1)).modulo(kittyAccessories.length).toNumber()].cloneNode();
-            accessory.className = "KittyBanner-image";
-            accessoryContainer.appendChild(accessory);
-
-            div.appendChild(accessoryContainer);
-            
-            chrome.runtime.sendMessage({"message": "GET_KITTY_LIVES", "kittyId": kittyId}, (response) => {
+        chrome.runtime.sendMessage({"message": "GET_KITTY_LIVES", "kittyId": kittyId}, (response) => {
+            if(response.result === 1) {
+                //Kitty is dead
+                div.removeChild(div.childNodes[0]);
+                tombstone.className = "KittyCard-image";
+                div.appendChild(tombstone.cloneNode());
+            }
+            else {
                 div.appendChild(renderPageHearts(response.result));
-            });
+
+                chrome.runtime.sendMessage({"message": "GET_KITTY", "kittyId": kittyId}, (response) => {
+                    let accessoryContainer = document.createElement("a");
+                    accessoryContainer.style.position = "absolute";
+
+                    let accessory = kittyAccessories[BigNumber(response.result.birthTime.slice(-1)).modulo(kittyAccessories.length).toNumber()].cloneNode();
+                    accessory.className = "KittyBanner-image";
+                    accessoryContainer.appendChild(accessory);
+
+                    div.appendChild(accessoryContainer);
+                });
+            }
         });
     });
 
@@ -99,7 +118,7 @@ function renderGridHearts(livesRemaining) {
     heartsContainer.style.marginLeft = '5px';
     heartsContainer.className = 'KittyCard-image';
     
-    for(let i=0; i < 9; i++) {
+    for(let i=1; i <= 9; i++) {
         if(i < livesRemaining) {
             heartsContainer.appendChild(heart.cloneNode());
         }

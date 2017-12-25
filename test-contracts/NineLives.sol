@@ -7,15 +7,18 @@ contract NineLivesTestContract {
     
     struct Kitty {
         uint256 id;
-        int8 lives;
+        uint8 lives;
     }
    
     function spawnKitty(uint256 _id) public {
         if(liveKitties[_id].id == 0) {
             var kitty = liveKitties[_id];
             kitty.id = _id;
-            kitty.lives = 9;
+            kitty.lives = 10;
             kittyIds.push(_id);
+        }
+        else {
+            revert();
         }
     }
    
@@ -23,10 +26,10 @@ contract NineLivesTestContract {
         public
         view
         returns (
-        int8 lives
+        uint8 lives
     ) {
         if(liveKitties[_id].id == 0) {
-            return -1;
+            return 0;
         }
         return liveKitties[_id].lives;
     }
@@ -34,7 +37,7 @@ contract NineLivesTestContract {
     function decrementLives(uint256 _id)
         public
     {
-        if(liveKitties[_id].lives > 0) {
+        if(liveKitties[_id].lives > 1) {
             liveKitties[_id].lives--;
         }
     }

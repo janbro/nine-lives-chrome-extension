@@ -20,10 +20,9 @@ chrome.runtime.onMessage.addListener(
                 }
                 else {
                     let lives = result.toNumber();
-                    if(lives === -1) {
+                    if(lives === 0) {
                         return false;
                     }
-                    console.log(lives);
                     sendResponse({result: lives});
                 }
             });
