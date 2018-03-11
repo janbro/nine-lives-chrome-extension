@@ -8,7 +8,7 @@
 You can easily deploy your contract straight from the [Remix IDE](remix.ethereum.org). 
 In the Run tab, change the environment dropdown to Web3 Provider, hit ok, then specify the testrpc localhost address as the endpoint, default `http://localhost:8545`
 
-After deploying the test contracts, make sure to update the contract address in the code. Unfortunately contracts cannot be deployed to a specific address, so a new address is created everytime it's deployed.
+After deploying the test contracts, make sure to update the contract address in the code. Unfortunately contracts cannot be deployed to a specific address, so a new address is created everytime it's deployed. Check this [repo](https://github.com/janbro/Nine-Lives-Contracts/blob/master/) for up to date contracts.
 
 More information at https://coursetro.com/posts/code/99/Interacting-with-a-Smart-Contract-through-Web3.js-(Tutorial)
 
