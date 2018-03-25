@@ -1,6 +1,25 @@
-let NINE_LIVES_CONTRACT_ADDRESS = '0xd3b61a9bfe51b1729c1d0ecfdf9318576d93edef';
+let NINE_LIVES_CONTRACT_ADDRESS = '0xe61b788b9cfac9d066cda9d655e42289ac0f17af';
 
 let NineLivesABI = web3.eth.contract([
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "isReadyToBattle",
+		"outputs": [
+			{
+				"name": "isReady",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
 	{
 		"constant": true,
 		"inputs": [
@@ -21,6 +40,29 @@ let NineLivesABI = web3.eth.contract([
 		"type": "function"
 	},
 	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "getKittyInfo",
+		"outputs": [
+			{
+				"name": "lives",
+				"type": "uint8"
+			},
+			{
+				"name": "isReadyToBattle",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -29,6 +71,24 @@ let NineLivesABI = web3.eth.contract([
 			}
 		],
 		"name": "decrementLives",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"name": "_isReadyToBattle",
+				"type": "bool"
+			}
+		],
+		"name": "setReadyToBattle",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
