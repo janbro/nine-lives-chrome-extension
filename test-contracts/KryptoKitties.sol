@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.17;
 
 contract TestKittyContract {
     
@@ -21,7 +21,7 @@ contract TestKittyContract {
         uint16 generation;
     }
    
-    function createKitty(string _seed) public {
+    function createKitty(string _seed) external {
         uint _genes = uint(keccak256(_seed));
         uint64 _birthTime = uint64(keccak256(_genes));
         uint64 _cooldownEndBlock = uint64(keccak256(_birthTime));
@@ -35,7 +35,7 @@ contract TestKittyContract {
     }
    
     function getKitty(uint256 _id)
-        public
+        external
         view
         returns (
         bool isGestating,

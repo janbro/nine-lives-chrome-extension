@@ -12,6 +12,25 @@ chrome.runtime.onMessage.addListener(
                 }
             });
         }
+        else if( request.message === "GET_KITTY_INFO" ) {
+            NineLives.getKittyInfo(request.kittyId, function(error, result) {
+                if(error) {
+                    console.log(error);
+                }
+                else {
+                    let lives = result[0].toNumber();
+
+                    if(lives === 0) {
+                        return false;
+                    }
+                    let kitty = {
+                        lives: lives,
+                        isReadyToBattle: result[1]
+                    }
+                    sendResponse({kitty});
+                }
+            });
+        }
         else if( request.message === "GET_KITTY_LIVES" ) {
             //Get kitty info from contract
             NineLives.getKittyLives(request.kittyId, function(error, result) {

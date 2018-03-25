@@ -1,4 +1,4 @@
-let KRYPTO_KITTIES_CONTRACT_ADDRESS = '0x39df7d0aa6e025c9d64d5919279ab6c62ca8126e';
+let KRYPTO_KITTIES_CONTRACT_ADDRESS = '0x12d222ec325cd8f60d5fdf432c8be2f00b320c87';
 
 class KittyInfo  {
 	constructor(_isGestating, _isReady, _cooldownIndex, _nextAuctionAt, _siringWithId, _birthTime, _matronId, _sireId, _generation, _genes) {
