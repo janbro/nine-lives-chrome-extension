@@ -1,6 +1,5 @@
 console.log("Nine Lives");
 
-
 let baseAccessory = document.createElement("IMG");
 baseAccessory.style.zIndex = 2;
 
@@ -47,7 +46,21 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
     else if( request.message === "POLL_KITTIES") {
         poll(renderAccessories, 10000, 100);
     }
+    else if(request.message === "WEB3") {
+        sendResponse(web3);
+    }
 });
+
+window.addEventListener("message", function(event) {
+    if (event.data.type && (event.data.type == "KITTY_INFO_OBJECT")) {
+        renderBattle(event.data.kittyDOM, event.data.kittyInfo);
+    }
+    if (event.data.type && (event.data.type == "SPAWNED_KITTY")) {
+        window.location.reload(false);
+    }
+}, false);
+
+let kittiesContent = [];
 
 function renderAccessories() {
     if(document.querySelector(".KittiesGrid-item") == undefined && document.querySelector(".KittyBanner-container") == undefined) {
@@ -57,87 +70,32 @@ function renderAccessories() {
 
     document.querySelectorAll(".KittiesGrid-item").forEach((div, index, array) => {
         let kittyId = /\/\d*$/g.exec(div.childNodes[0].href)[0].substr(1);
+        let kittyDOM = {
+            kittyId: kittyId,
+            index: index,
+            isGridItem: true
+        };
 
-        //Send kitty ids to background script
-        chrome.runtime.sendMessage({"message": "GET_KITTY_INFO", "kittyId": kittyId}, (response) => {
-            if(response) {
-                let parent = div.childNodes[0].childNodes[0].childNodes[0];
+        kittiesContent.push({parent: div, container: div.childNodes[0].childNodes[0].childNodes[0]});
 
-                parent.appendChild(renderGridHearts(response.kitty.lives));
-
-                if(response.kitty.lives === 1) {
-                    //Kitty is dead
-                    parent.removeChild(parent.childNodes[0]);
-                    tombstone.className = "KittyCard-image";
-                    parent.appendChild(tombstone.cloneNode());
-                }
-                else {
-                    //Render battle stuff
-                    if(response.kitty.lives === 1 < 10) {
-                        let accessories = [];
-                        kittyAccessories.slice(0, int(response.kitty.lives / 2)).forEach(function(accessory, ind) {
-                            accessories[ind] = accessory.cloneNode();
-                            accessories[ind].className = "KittyCard-image";
-                            accessories[ind].style.position = "absolute";
-                            parent.appendChild(accessories, ind);
-                        });
-                    }
-
-                    if(response.kitty.isReadyToBattle) {
-                        fire.className += ' KittyCard-image';
-                        fire.style.left = '40%';
-                        fire.style.top = '10%';
-                        parent.appendChild(fire.cloneNode());
-                        fire.style.left = '56%';
-                        parent.appendChild(fire.cloneNode());
-
-                        console.log($(parent).css('background-color'));
-
-                        loadFire();
-                    }
-                }
-            }
-        });
+        window.postMessage({ type: "GET_KITTY_INFO", kittyDOM: JSON.stringify(kittyDOM) }, "*");
+        
     });
 
     //KittyBanner-container
+    //Single kitty page
     document.querySelectorAll(".KittyBanner-container").forEach((div, index, array) => {
         let kittyId = /\/\d*$/g.exec(div.childNodes[0].href)[0].substr(1);
 
-        //Send kitty ids to background script
-        chrome.runtime.sendMessage({"message": "GET_KITTY_LIVES", "kittyId": kittyId}, (response) => {
-            div.appendChild(renderPageHearts(response.result));
+        let kittyDOM = {
+            kittyId: kittyId,
+            index: index,
+            isGridItem: false
+        };
 
-            if(response.result === 1) {
-                //Kitty is dead
-                div.removeChild(div.childNodes[0]);
-                tombstone.className = "KittyCard-image";
-                div.appendChild(tombstone.cloneNode());
-            }
-            else {
-                chrome.runtime.sendMessage({"message": "GET_KITTY_INFO", "kittyId": kittyId}, (response) => {
-                    if(response.kitty.lives === 1 < 10) {
-                        let accessories = [];
-                        kittyAccessories.slice(0, int(response.kitty.lives / 2)).forEach(function(accessory, ind) {
-                            accessories[ind] = accessory.cloneNode();
-                            accessories[ind].className = "KittyCard-image";
-                            accessories[ind].style.position = "absolute";
-                            parent.appendChild(accessories, ind);
-                        });
-                    }
-                    if(response.kitty.isReadyToBattle) {
-                        let battleButton = document.createElement("BUTTON");
-                        battleButton.className = 'Button Button--love';
-                        battleButton.innerHTML = 'Battle';
-                        battleButton.style.position = 'absolute';
-                        battleButton.style.right = '0px';
-                        battleButton.style.bottom = '5%';
+        kittiesContent.push({parent: div, container: div});
 
-                        div.appendChild(battleButton);
-                    }
-                });
-            }
-        });
+        window.postMessage({ type: "GET_KITTY_INFO", kittyDOM: JSON.stringify(kittyDOM) }, "*");
     });
 
     return true;
@@ -183,6 +141,107 @@ function renderPageHearts(livesRemaining) {
     }
 
     return heartsContainer;
+}
+
+function renderBattle(kittyDOM, kittyInfo) {
+    let div = kittiesContent[kittyDOM.index].parent;
+    let container = kittiesContent[kittyDOM.index].container;
+
+    if(kittyInfo.lives === 0 && !kittyDOM.isGridItem && kittyInfo.isOwner) {
+        let spawnKittyButton = document.createElement("BUTTON");
+        spawnKittyButton.className = 'Button Button--love';
+        spawnKittyButton.innerHTML = 'Spawn Kitty';
+        spawnKittyButton.style.position = 'absolute';
+        spawnKittyButton.style.right = '0px';
+        spawnKittyButton.style.bottom = '5%';
+
+        spawnKittyButton.onclick = function() {
+            window.postMessage({ type: "SPAWN_KITTY", kittyId: kittyDOM.kittyId }, "*");
+        }
+
+        div.appendChild(spawnKittyButton);
+    }
+    else if (kittyInfo.lives > 1) {
+        if(kittyDOM.isGridItem) {
+            container.appendChild(renderGridHearts(kittyInfo.lives));
+
+            if(kittyInfo.lives === 1) {
+                //Kitty is dead
+                container.removeChild(container.childNodes[0]);
+                tombstone.className = "KittyCard-image";
+                container.appendChild(tombstone.cloneNode());
+            }
+            else {
+                //Render battle stuff
+                if(kittyInfo.lives === 1 < 10) {
+                    let accessories = [];
+                    kittyAccessories.slice(0, int(kittyInfo.lives / 2)).forEach(function(accessory, ind) {
+                        accessories[ind] = accessory.cloneNode();
+                        accessories[ind].className = "KittyCard-image";
+                        accessories[ind].style.position = "absolute";
+                        container.appendChild(accessories, ind);
+                    });
+                }
+
+                if(kittyInfo.isReadyToBattle) {
+                    fire.className += ' KittyCard-image';
+                    fire.style.left = '40%';
+                    fire.style.top = '10%';
+                    container.appendChild(fire.cloneNode());
+                    fire.style.left = '56%';
+                    container.appendChild(fire.cloneNode());
+
+                    console.log($(container).css('background-color'));
+
+                    loadFire();
+                }
+            }
+        }
+        else {
+            container.appendChild(renderPageHearts(kittyInfo.lives));
+
+            if(kittyInfo.lives === 1) {
+                //Kitty is dead
+                container.removeChild(container.childNodes[0]);
+                tombstone.className = "KittyBanner-image";
+                container.appendChild(tombstone.cloneNode());
+            }
+            else if (kittyInfo.lives > 1) {
+                let accessories = [];
+                kittyAccessories.slice(0, 5 - Math.ceil(kittyInfo.lives / 2)).forEach(function(accessory, ind) {
+                    accessories[ind] = accessory.cloneNode();
+                    accessories[ind].className = "KittyBanner-image";
+                    accessories[ind].style.position = "absolute";
+                    container.appendChild(accessories[ind]);
+                });
+
+                if(kittyInfo.isReadyToBattle && !kittyInfo.isOwner) {
+                    let battleButton = document.createElement("BUTTON");
+                    battleButton.className = 'Button Button--love';
+                    battleButton.innerHTML = 'Battle';
+                    battleButton.style.position = 'absolute';
+                    battleButton.style.right = '0px';
+                    battleButton.style.bottom = '5%';
+                    
+                    container.appendChild(battleButton);
+                }
+                else if(!kittyInfo.isReadyToBattle) {
+                    let battleButton = document.createElement("BUTTON");
+                    battleButton.className = 'Button Button--love';
+                    battleButton.innerHTML = 'Send To Arena';
+                    battleButton.style.position = 'absolute';
+                    battleButton.style.right = '0px';
+                    battleButton.style.bottom = '5%';
+
+                    battleButton.onclick = function() {
+                        window.postMessage({ type: "SEND_KITTY_READY_TO_BATTLE", kittyId: kittyDOM.kittyId }, "*");
+                    }
+
+                    container.appendChild(battleButton);
+                }
+            }
+        }
+    }
 }
 
 // The polling function
