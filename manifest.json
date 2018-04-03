@@ -15,11 +15,7 @@
     "background": {
         "scripts": [
             "scripts/dependencies/bignumber.min.js",
-            "scripts/dependencies/web3.min.js",
-            "scripts/contracts/InitializeWeb3.js",
-            "scripts/contracts/KryptoKittiesInterface.js",
-            "scripts/contracts/NineLivesInterface.js",
-            "scripts/background.js"
+            "scripts/dependencies/web3.min.js"
         ]
     },
     "content_scripts": [
@@ -31,8 +27,10 @@
             ],
             "js": [
                 "scripts/dependencies/bignumber.min.js",
+                "scripts/dependencies/web3.min.js",
                 "scripts/dependencies/jquery-3.2.1.min.js",
                 "scripts/content.js",
+                "scripts/contracts/initWeb3.js",
                 "scripts/fire.js"
             ]
         }
